@@ -1,17 +1,45 @@
 import os
 
-from flask import Flask
+from constants import BASE_DIR
+from flask import Flask, request, jsonify
+from utils import dict_of_utils
 
 app = Flask(__name__)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
+
+# получить параметры query и file_name из request.args, при ошибке вернуть ошибку 400
+# проверить, что файла file_name существует в папке DATA_DIR, при ошибке вернуть ошибку 400
+# с помощью функционального программирования (функций filter, map), итераторов/генераторов сконструировать запрос
+# вернуть пользователю сформированный результат
 
 
-@app.route("/perform_query")
+@app.post("/perform_query")
 def perform_query():
-    # получить параметры query и file_name из request.args, при ошибке вернуть ошибку 400
-    # проверить, что файла file_name существует в папке DATA_DIR, при ошибке вернуть ошибку 400
-    # с помощью функционального программирования (функций filter, map), итераторов/генераторов сконструировать запрос
-    # вернуть пользователю сформированный результат
-    return app.response_class('', content_type="text/plain")
+    file_name = request.args.get('file_name')
+    cmd1 = request.args.get('cmd1')
+    value1 = request.args.get('value1')
+    cmd2 = request.args.get('cmd2')
+    value2 = request.args.get('value2')
+
+    if None in (file_name, cmd1, value1, cmd2, value2):
+        return 'Не все поля заполнены', 400
+
+    if not os.path.exists(BASE_DIR + '/data/' + file_name):
+        return 'Файл не найден', 400
+
+    first_func = dict_of_utils.get(cmd1)
+    second_func = dict_of_utils.get(cmd2)
+
+    first_res = first_func(value1)
+
+
+
+
+    return jsonify(list(first_res))
+    # return app.response_class('', content_type="text/plain")
+
+
+
+
+if __name__ == '__main__':
+    app.run()
