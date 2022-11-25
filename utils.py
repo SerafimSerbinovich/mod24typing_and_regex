@@ -8,23 +8,23 @@ def log_generator():
             yield log
 
 
-def user_filter(value):
-    return filter(lambda x: value in x, log_generator())
+def user_filter(value, generator):
+    return filter(lambda x: value in x, generator)
 
 
-def user_map(num):
-    return map(lambda string: string.split()[num], log_generator())
+def user_map(num, generator):
+    return map(lambda string: string.split()[int(num)], generator)
 
 
-def user_unique():
+def user_unique(value, generator):
     listt = []
-    for string in log_generator():
+    for string in generator:
         if string not in listt:
             listt.append(string)
             yield string
 
 
-def user_sort(order):
+def user_sort(order, generator):
     reverse = None
 
     if order == 'asc':
@@ -32,14 +32,13 @@ def user_sort(order):
     elif order == 'desc':
         reverse = True
 
-    for string in sorted(log_generator(), reverse=reverse):
+    for string in sorted(generator, reverse=reverse):
         yield string
-    # return sorted(log_generator(), reverse=reverse)
 
 
-def user_limit(num):
+def user_limit(num, generator):
     counter = 1
-    for string in log_generator():
+    for string in generator:
         if counter > num:
             break
 

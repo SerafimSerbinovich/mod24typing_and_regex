@@ -2,7 +2,7 @@ import os
 
 from constants import BASE_DIR
 from flask import Flask, request, jsonify
-from utils import dict_of_utils
+from utils import dict_of_utils, log_generator
 
 app = Flask(__name__)
 
@@ -27,16 +27,15 @@ def perform_query():
     if not os.path.exists(BASE_DIR + '/data/' + file_name):
         return 'Файл не найден', 400
 
+    default_generator = log_generator()
+
     first_func = dict_of_utils.get(cmd1)
     second_func = dict_of_utils.get(cmd2)
 
-    first_res = first_func(value1)
+    first_res = first_func(value1, default_generator)
+    second_res = second_func(value2, first_res)
 
-
-
-
-    return jsonify(list(first_res))
-    # return app.response_class('', content_type="text/plain")
+    return jsonify(list(second_res))
 
 
 
