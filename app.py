@@ -7,12 +7,6 @@ from utils import dict_of_utils, log_generator
 app = Flask(__name__)
 
 
-# получить параметры query и file_name из request.args, при ошибке вернуть ошибку 400
-# проверить, что файла file_name существует в папке DATA_DIR, при ошибке вернуть ошибку 400
-# с помощью функционального программирования (функций filter, map), итераторов/генераторов сконструировать запрос
-# вернуть пользователю сформированный результат
-
-
 @app.post("/perform_query")
 def perform_query():
     file_name = request.args.get('file_name')
@@ -23,6 +17,9 @@ def perform_query():
 
     if None in (file_name, cmd1, value1, cmd2, value2):
         return 'Не все поля заполнены', 400
+
+    if cmd1 not in dict_of_utils or cmd2 not in dict_of_utils:
+        return 'Неизвестная функция', 400
 
     if not os.path.exists(BASE_DIR + '/data/' + file_name):
         return 'Файл не найден', 400
@@ -36,8 +33,6 @@ def perform_query():
     second_res = second_func(value2, first_res)
 
     return jsonify(list(second_res))
-
-
 
 
 if __name__ == '__main__':
